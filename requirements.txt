@@ -1,0 +1,7 @@
+nltk==3.4.3
+numpy==1.19.2
+pandas==0.25.3
+spacy==2.1.4
+tensorflow==2.5.1
+sklearn==0.0
+en_core_web_sm==2.1.0
