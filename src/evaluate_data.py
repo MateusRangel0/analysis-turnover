@@ -1,5 +1,6 @@
 from imports import *
 import generate_dataset as generate_dataset
+import matplotlib.pyplot as plt
 
 generate_dataset.create_columns()
 reviews_train = pd.read_csv('../data/en_training_dataset.csv').astype(str)
@@ -75,6 +76,20 @@ test_sentiment_terms = pd.DataFrame(
     tokenizer.texts_to_matrix(test_sentiment_terms))
 
 # Models output
+positives = 0
+negatives = 0
+isFormerForNegatives = {"isFormer": 0, "notFormer": 0}
+aspectsDic = {
+  'pay': [0, 0], 
+  'conditions': [0, 0], 
+  'nature_of_work': [0, 0], 
+  'promotion': [0, 0], 
+  'supervision': [0, 0], 
+  'rewards': [0, 0], 
+  'coworkers': [0, 0], 
+  'communication': [0, 0],
+  'benefits': [0, 0]
+}
 test_aspect_categories = label_encoder.inverse_transform(
     absa_model.predict_classes(test_aspect_terms))
 test_sentiment = label_encoder_2.inverse_transform(
@@ -82,10 +97,61 @@ test_sentiment = label_encoder_2.inverse_transform(
 for i in range(len(test_reviews)-1):
     print("Review " + str(i+1) + " is expressing a " + test_sentiment[i] + " opinion about " + test_aspect_categories[i])
     if (test_sentiment[i] == 'positive'):
+        positives+=1
         generate_dataset.generate_visual_dataset(3, test_aspect_categories[i], former_emp[i])
         generate_dataset.generate_quantitative_dataset(3, test_aspect_categories[i], former_emp[i])
     if (test_sentiment[i] == 'negative'):
+        if former_emp[i] == "1":
+          isFormerForNegatives["isFormer"] += 1
+          aspectsDic[test_aspect_categories[i]][0] += 1
+        else:
+          isFormerForNegatives["notFormer"] += 1
+          aspectsDic[test_aspect_categories[i]][1] += 1
+        negatives+=1
+        aspectsDic[test_aspect_categories[i]][1] += 1
         generate_dataset.generate_visual_dataset(1, test_aspect_categories[i], former_emp[i])
         generate_dataset.generate_quantitative_dataset(1, test_aspect_categories[i], former_emp[i])
 
 
+
+# Build pie charts
+plt.figure(0)
+labels = "Positivas", "Negativas"
+sizes = [positives, negatives]
+plt.pie(sizes, labels = labels, autopct='%1.1f%%')
+plt.savefig("PositiveAndNegativeProportion.png")
+plt.figure(1)
+labelsFormer = "Ex-Funcionário", "Funcionário"
+sizesFormer = [isFormerForNegatives["isFormer"], isFormerForNegatives["notFormer"]]
+plt.pie(sizesFormer, labels = labelsFormer, autopct='%1.0f%%')
+plt.savefig("FormerProportionOnNegativeReviews.png")
+
+# Build bar Chart
+plt.figure(2)
+labels = list(aspectsDic.keys())
+valuesDic = list(aspectsDic.values())
+formerValues = [element[0] for element in valuesDic]
+notFormerValues = [element[1] for element in valuesDic]
+df = pd.DataFrame(dict(graph=labels, n=formerValues, m=notFormerValues)) 
+
+ind = np.arange(len(df))
+width = 0.4
+
+fig, ax = plt.subplots(figsize =(16, 9))
+rects1 = ax.barh(ind, df.n, width, label='Ex-Funcionário')
+rects2 = ax.barh(ind + width, df.m, width, label='Funcionário')
+
+ax.set(yticks=ind + width, yticklabels=df.graph, ylim=[2*width - 1, len(df)])
+ax.legend()
+ax.set_title('Avaliações negativas agrupadas por tipo')
+ax.set_xlabel('Quantidade')
+ax.xaxis.set_tick_params(pad = 5)
+ax.yaxis.set_tick_params(pad = 10)  
+ax.bar_label(rects1, padding=6)
+ax.bar_label(rects2, padding=6)
+ax.grid(b = True, color ='grey',
+        linestyle ='-.', linewidth = 0.5,
+        alpha = 0.2)
+plt.savefig("AspectsFormerProportion.png")
+
+print(aspectsDic)
