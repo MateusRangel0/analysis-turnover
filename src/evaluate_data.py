@@ -150,5 +150,3 @@ plt.xlim(0, 100)
 ax.set_title('Avaliações negativas agrupadas por tipo')
 ax.set_xlabel('Quantidade')
 plt.savefig("AspectsFormerProportion.png")
-
-print(aspectsDic)
