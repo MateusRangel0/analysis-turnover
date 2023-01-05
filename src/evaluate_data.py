@@ -128,30 +128,27 @@ plt.savefig("FormerProportionOnNegativeReviews.png")
 
 # Build bar Chart
 plt.figure(2)
-labels = list(aspectsDic.keys())
+labels = ['Pagamento', 'Condições', 'Natureza de Trabalho', 'Promoção', 'Supervisão', 'Recompensas',
+ 'Colegas', 'Comunicação','Benefícios']
 valuesDic = list(aspectsDic.values())
 formerValues = [element[0] for element in valuesDic]
 notFormerValues = [element[1] for element in valuesDic]
 df = pd.DataFrame(dict(graph=labels, n=formerValues, m=notFormerValues)) 
-
 ind = np.arange(len(df))
 width = 0.4
-
-fig, ax = plt.subplots(figsize =(16, 9))
+fig, ax = plt.subplots(figsize =(15, 9))
 rects1 = ax.barh(ind, df.n, width, label='Ex-Funcionário')
 rects2 = ax.barh(ind + width, df.m, width, label='Funcionário')
-
 ax.set(yticks=ind + width, yticklabels=df.graph, ylim=[2*width - 1, len(df)])
 ax.legend()
-ax.set_title('Avaliações negativas agrupadas por tipo')
-ax.set_xlabel('Quantidade')
 ax.xaxis.set_tick_params(pad = 5)
-ax.yaxis.set_tick_params(pad = 10)  
+ax.yaxis.set_tick_params(pad = 5)  
 ax.bar_label(rects1, padding=6)
 ax.bar_label(rects2, padding=6)
-ax.grid(b = True, color ='grey',
-        linestyle ='-.', linewidth = 0.5,
-        alpha = 0.2)
+ax.grid(b = True, color ='grey', linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+plt.xlim(0, 100)
+ax.set_title('Avaliações negativas agrupadas por tipo')
+ax.set_xlabel('Quantidade')
 plt.savefig("AspectsFormerProportion.png")
 
 print(aspectsDic)
