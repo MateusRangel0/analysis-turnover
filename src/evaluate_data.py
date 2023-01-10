@@ -113,17 +113,19 @@ for i in range(len(test_reviews)-1):
         generate_dataset.generate_quantitative_dataset(1, test_aspect_categories[i], former_emp[i])
 
 
-
+lightBlue = '#42A5F5'
+blue = '#0d6683'
+explode = (0, 0.1)
 # Build pie charts
 plt.figure(0)
 labels = "Positivas", "Negativas"
 sizes = [positives, negatives]
-plt.pie(sizes, labels = labels, autopct='%1.1f%%')
+plt.pie(sizes, labels = labels, explode=explode, autopct='%1.1f%%', colors=[lightBlue, blue])
 plt.savefig("PositiveAndNegativeProportion.png")
 plt.figure(1)
 labelsFormer = "Ex-Funcionário", "Funcionário"
 sizesFormer = [isFormerForNegatives["isFormer"], isFormerForNegatives["notFormer"]]
-plt.pie(sizesFormer, labels = labelsFormer, autopct='%1.0f%%')
+plt.pie(sizesFormer, labels = labelsFormer, explode=explode, autopct='%1.1f%%', colors=[lightBlue, blue])
 plt.savefig("FormerProportionOnNegativeReviews.png")
 
 # Build bar Chart
@@ -137,8 +139,8 @@ df = pd.DataFrame(dict(graph=labels, n=formerValues, m=notFormerValues))
 ind = np.arange(len(df))
 width = 0.4
 fig, ax = plt.subplots(figsize =(15, 9))
-rects1 = ax.barh(ind, df.n, width, label='Ex-Funcionário')
-rects2 = ax.barh(ind + width, df.m, width, label='Funcionário')
+rects1 = ax.barh(ind, df.n, width, label='Ex-Funcionário', color=lightBlue)
+rects2 = ax.barh(ind + width, df.m, width, label='Funcionário', color=blue)
 ax.set(yticks=ind + width, yticklabels=df.graph, ylim=[2*width - 1, len(df)])
 ax.legend()
 ax.xaxis.set_tick_params(pad = 5)
