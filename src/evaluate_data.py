@@ -112,20 +112,36 @@ for i in range(len(test_reviews)-1):
         generate_dataset.generate_visual_dataset(1, test_aspect_categories[i], former_emp[i])
         generate_dataset.generate_quantitative_dataset(1, test_aspect_categories[i], former_emp[i])
 
+def autolabel(rects):
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate('{}'.format(height),
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
 
 lightBlue = '#42A5F5'
 blue = '#0d6683'
 explode = (0, 0.1)
 # Build pie charts
 plt.figure(0)
-labels = "Positivas", "Negativas"
-sizes = [positives, negatives]
-plt.pie(sizes, labels = labels, explode=explode, autopct='%1.1f%%', colors=[lightBlue, blue])
+width = 0.35
+sizes = [negatives, positives]
+colors = [lightBlue, blue]
+fig, ax = plt.subplots(figsize =(10, 7))
+labelsFormer = "Negativas", "Positivas"
+rect = plt.bar(labelsFormer, sizes, color=colors)
+autolabel(rect)
+print(sizes)
 plt.savefig("PositiveAndNegativeProportion.png")
 plt.figure(1)
-labelsFormer = "Ex-Funcionário", "Funcionário"
-sizesFormer = [isFormerForNegatives["isFormer"], isFormerForNegatives["notFormer"]]
-plt.pie(sizesFormer, labels = labelsFormer, explode=explode, autopct='%1.1f%%', colors=[lightBlue, blue])
+fig, ax = plt.subplots(figsize =(10, 7))
+labelsFormer = "Funcionário Atual", "Ex-Funcionário"
+sizesFormer = [isFormerForNegatives["notFormer"], isFormerForNegatives["isFormer"]]
+rect = plt.bar(labelsFormer, sizesFormer, color=colors)
+autolabel(rect)
+# plt.pie(sizesFormer, labels = labelsFormer, explode=explode, autopct='%1.1f%%', colors=[lightBlue, blue])
 plt.savefig("FormerProportionOnNegativeReviews.png")
 
 # Build bar Chart
