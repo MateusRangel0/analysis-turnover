@@ -104,11 +104,10 @@ for i in range(len(test_reviews)-1):
         if former_emp[i] == "1":
           isFormerForNegatives["isFormer"] += 1
           aspectsDic[test_aspect_categories[i]][0] += 1
-        else:
+        elif former_emp[i] == "0":
           isFormerForNegatives["notFormer"] += 1
           aspectsDic[test_aspect_categories[i]][1] += 1
         negatives+=1
-        aspectsDic[test_aspect_categories[i]][1] += 1
         generate_dataset.generate_visual_dataset(1, test_aspect_categories[i], former_emp[i])
         generate_dataset.generate_quantitative_dataset(1, test_aspect_categories[i], former_emp[i])
 
@@ -164,7 +163,7 @@ ax.yaxis.set_tick_params(pad = 5)
 ax.bar_label(rects1, padding=6)
 ax.bar_label(rects2, padding=6)
 ax.grid(b = True, color ='grey', linestyle ='-.', linewidth = 0.5, alpha = 0.2)
-plt.xlim(0, 100)
+plt.xlim(0, 50)
 ax.set_title('Avaliações negativas agrupadas por tipo')
 ax.set_xlabel('Quantidade')
 plt.savefig("AspectsFormerProportion.png")
